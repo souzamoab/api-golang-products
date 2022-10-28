@@ -1,183 +1,114 @@
 package controllers
 
 import (
-	"github.com/fabriciojlm/api-golang-users/src/app/controllers/dto"
-	"github.com/fabriciojlm/api-golang-users/src/app/database"
-	"github.com/fabriciojlm/api-golang-users/src/app/entity"
 	"github.com/gin-gonic/gin"
+	"github.com/souzamoab/api-golang-products/src/app/controllers/dto"
+	"github.com/souzamoab/api-golang-products/src/app/database"
+	"github.com/souzamoab/api-golang-products/src/app/entity"
 )
 
-// CreateUser    api-golang-users
-// @Summary      Criar user
-// @Tags         Users
-// @Produce      json
-// @Param        User  body     models.User true "User JSON"
-// @Success      200  {object}  models.User
-// @failure      400  {string}  string    "request não possui body"
-// @Router       / [post]
-func CreateUser(c *gin.Context) {
+func CreateProduct(c *gin.Context) {
 	db := database.GetDatabase()
 
-	var userCreateDTO dto.UserCreateDTO
+	var productCreateDTO dto.ProductCreateDTO
 
-	if err := c.ShouldBindJSON(&userCreateDTO); err != nil {
+	if err := c.ShouldBindJSON(&productCreateDTO); err != nil {
 		c.JSON(400, gin.H{
-			"error": "cannot bind JSON: " + err.Error(),
+			"error": "Cannot bind JSON: " + err.Error(),
 		})
 		return
 	}
 
-	user := entity.User{
-		UserName:   userCreateDTO.UserName,
-		FirstName:  userCreateDTO.FirstName,
-		LastName:   userCreateDTO.LastName,
-		Email:      userCreateDTO.Email,
-		Password:   userCreateDTO.Password,
-		Phone:      userCreateDTO.Phone,
-		UserStatus: userCreateDTO.UserStatus}
+	product := entity.Product{
+		Title:       productCreateDTO.Title,
+		Description: productCreateDTO.Description,
+		Price:       productCreateDTO.Price,
+		Quantity:    productCreateDTO.Quantity}
 
-	if err := db.Create(&user).Error; err != nil {
+	if err := db.Create(&product).Error; err != nil {
 		c.JSON(400, gin.H{
-			"error": "usuário não criado: " + err.Error(),
+			"error": "Product not created: " + err.Error(),
 		})
 		return
 	}
 
-	c.JSON(201, user)
+	c.JSON(201, product)
 }
 
-// CreateUsers   api-golang-users
-// @Summary      Cria uma lista de usuários de acordo com o array
-// @Tags         Users
-// @Produce      json
-// @Param        User  body     []models.User true "User JSON"
-// @Success      200  {object}  []models.User
-// @Router       /createWithArray [post]
-func CreateUserArray(c *gin.Context) {
+func ShowAllProducts(c *gin.Context) {
 	db := database.GetDatabase()
-
-	var p []entity.User
-
-	err := c.ShouldBindJSON(&p)
-	if err != nil {
-		c.JSON(400, gin.H{
-			"error": "cannot bind JSON: " + err.Error(),
-		})
-		return
-	}
-
-	err = db.Create(&p).Error
-	if err != nil {
-		c.JSON(400, gin.H{
-			"error": "usuários não criados" + err.Error(),
-		})
-		return
-	}
-
-	c.JSON(200, "Todos os usuários criados")
-}
-
-// ShowAllUsers  api-golang-users
-// @Summary      Lista de usuários cadastrados
-// @Tags         Users
-// @Produce      json
-// @Success      200  {array}  models.User
-// @Router       / [get]
-func ShowAllUsers(c *gin.Context) {
-	db := database.GetDatabase()
-	var p []entity.User
-	err := db.Find(&p).Error
+	var products []entity.Product
+	err := db.Find(&products).Error
 
 	if err != nil {
 		c.JSON(400, gin.H{
-			"error": "cannot find user by name: " + err.Error(),
+			"error": "Products not found: " + err.Error(),
 		})
 		return
 	}
 
-	c.JSON(200, p)
+	c.JSON(200, products)
 }
 
-// GetUserById   api-golang-users
-// @Summary      Trazer um usuário pelo username
-// @Tags         Users
-// @Produce      json
-// @Param        id  path      string  true  "Id do usuario a ser acessado"
-// @Success      200
-// @Router       /{id} [get]
-func GetUserById(c *gin.Context) {
+func GetProductById(c *gin.Context) {
 	db := database.GetDatabase()
 
 	id := c.Param("id")
 
-	var p entity.User
+	var product entity.Product
 
-	err := db.Where("id = ?", id).First(&p).Error
+	err := db.Where("id = ?", id).First(&product).Error
 	if err != nil {
 		c.JSON(400, gin.H{
-			"error": "usuário não encontrado: " + err.Error(),
+			"error": "Product not found: " + err.Error(),
 		})
 		return
 	}
 
-	c.JSON(200, p)
+	c.JSON(200, product)
 }
 
 func Health(c *gin.Context) {
 	c.JSON(200, "API is healthy")
 }
 
-// GetUsersByUsername      api-golang-users
-// @Summary      Trazer um usuário pelo username
-// @Tags         Users
-// @Produce      json
-// @Param        name  path      string  true  "username do usuario a ser acessado"
-// @Success      200
-// @Router       ?user_name [get]
-func ShowUserByName(c *gin.Context) {
+func ShowProductByTitle(c *gin.Context) {
 	db := database.GetDatabase()
 
-	name := c.Query("user_name")
+	name := c.Query("title")
 
-	var p entity.User
+	var product entity.Product
 
-	err := db.Where("user_name = ?", name).First(&p).Error
+	err := db.Where("title = ?", name).First(&product).Error
 	if err != nil {
 		c.JSON(400, gin.H{
-			"error": "usuário não encontrado: " + err.Error(),
+			"error": "Product not found: " + err.Error(),
 		})
 		return
 	}
 
-	c.JSON(200, p)
+	c.JSON(200, product)
 }
 
-// DeleteUsersByUsername      api-golang-users
-// @Summary      Deletar user
-// @Tags         Users
-// @Produce      json
-// @Param        name  path      string  true  "username do usuário a ser apagado"
-// @Success      200
-// @Router       /{id} [delete]
-func DeleteUser(c *gin.Context) {
+func DeleteProduct(c *gin.Context) {
 
 	db := database.GetDatabase()
 	id := c.Param("id")
 
-	var p entity.User
+	var product entity.Product
 
-	err := db.Where("id = ?", id).First(&p).Error
+	err := db.Where("id = ?", id).First(&product).Error
 	if err != nil {
 		c.JSON(400, gin.H{
-			"id": "invalido" + err.Error(),
+			"id": "Invalid" + err.Error(),
 		})
 		return
 	}
 
-	err = db.Delete(&p).Error
+	err = db.Delete(&product).Error
 	if err != nil {
 		c.JSON(400, gin.H{
-			"usuário": "não encontrado " + err.Error(),
+			"error": "Product not found " + err.Error(),
 		})
 		return
 	}
@@ -185,48 +116,36 @@ func DeleteUser(c *gin.Context) {
 	c.JSON(204, "")
 }
 
-// GetUsersByUsername      api-golang-users
-// @Summary      Atualizar user
-// @Tags         Users
-// @Produce      json
-// @Param        name  path      string  true  "username do usuário a ser atualizado"
-// @Success      200
-// @Router       /{name} [put]
-func EditUser(c *gin.Context) {
-
-	//TODO: Fix the update operation
+func EditProduct(c *gin.Context) {
 
 	db := database.GetDatabase()
 
 	id := c.Param("id")
 
-	var user entity.User
-	var userUpdateDto dto.UserUpdateDTO
+	var product entity.Product
+	var productUpdateDTO dto.ProductUpdateDTO
 
-	if err := db.Where("id = ?", id).First(&user).Error; err != nil {
+	if err := db.Where("id = ?", id).First(&product).Error; err != nil {
 		c.JSON(400, gin.H{
-			"error": "usuário não encontrado: " + err.Error(),
+			"error": "Product not found: " + err.Error(),
 		})
 		return
 	}
 
-	if err := c.ShouldBindJSON(&userUpdateDto); err != nil {
+	if err := c.ShouldBindJSON(&productUpdateDTO); err != nil {
 		c.JSON(400, gin.H{
-			"error": "cannot bind JSON: " + err.Error(),
+			"error": "Cannot bind JSON: " + err.Error(),
 		})
 		return
 	}
 
-	user.UserName = userUpdateDto.UserName
-	user.FirstName = userUpdateDto.FirstName
-	user.LastName = userUpdateDto.LastName
-	user.Email = userUpdateDto.Email
-	user.Password = userUpdateDto.Password
-	user.Phone = userUpdateDto.Phone
-	user.UserStatus = userUpdateDto.UserStatus
+	product.Title = productUpdateDTO.Title
+	product.Description = productUpdateDTO.Description
+	product.Price = productUpdateDTO.Price
+	product.Quantity = productUpdateDTO.Quantity
 
-	db.Save(&user)
+	db.Save(&product)
 
-	c.JSON(200, user)
+	c.JSON(200, product)
 
 }

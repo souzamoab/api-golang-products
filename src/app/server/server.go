@@ -3,8 +3,8 @@ package server
 import (
 	"log"
 
-	"github.com/fabriciojlm/api-golang-users/src/app/server/routes"
 	"github.com/gin-gonic/gin"
+	"github.com/souzamoab/api-golang-products/src/app/server/routes"
 )
 
 type Server struct {

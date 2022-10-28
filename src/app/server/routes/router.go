@@ -1,8 +1,8 @@
 package routes
 
 import (
-	"github.com/fabriciojlm/api-golang-users/src/app/controllers"
 	"github.com/gin-gonic/gin"
+	"github.com/souzamoab/api-golang-products/src/app/controllers"
 )
 
 func ConfigRoutes() *gin.Engine {
@@ -10,15 +10,15 @@ func ConfigRoutes() *gin.Engine {
 
 	main := router.Group("api/v1")
 	{
-		users := main.Group("users")
+		products := main.Group("products")
 		{
-			users.GET("/", controllers.ShowAllUsers)
-			users.GET("/health", controllers.Health)
-			users.GET("/:id", controllers.GetUserById)
-			users.POST("/", controllers.CreateUser)
-			users.POST("/createWithArray", controllers.CreateUserArray)
-			users.PUT("/:id", controllers.EditUser)
-			users.DELETE("/:id", controllers.DeleteUser)
+			products.GET("/", controllers.ShowAllProducts)
+			products.GET("/health", controllers.Health)
+			products.GET("/:id", controllers.GetProductById)
+			products.GET("/filter", controllers.ShowProductByTitle)
+			products.POST("/", controllers.CreateProduct)
+			products.PUT("/:id", controllers.EditProduct)
+			products.DELETE("/:id", controllers.DeleteProduct)
 		}
 	}
 	return router

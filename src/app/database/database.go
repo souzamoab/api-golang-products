@@ -5,7 +5,7 @@ import (
 	"os"
 	"time"
 
-	"github.com/fabriciojlm/api-golang-users/src/app/database/migrations"
+	"github.com/souzamoab/api-golang-products/src/app/database/migrations"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )

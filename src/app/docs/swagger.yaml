@@ -1,0 +1,135 @@
+basePath: /api/v1/users
+definitions:
+  models.User:
+    properties:
+      email:
+        type: string
+      first_name:
+        type: string
+      id:
+        type: integer
+      last_name:
+        type: string
+      name:
+        type: string
+      password:
+        type: string
+      phone:
+        type: string
+      user_status:
+        type: string
+    type: object
+host: localhost:8090
+info:
+  contact:
+    email: fabricio1099@gmail.com
+    name: Fabricio Juliano
+  title: Users API (ASCAN)
+  version: "1.0"
+paths:
+  /:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.User'
+            type: array
+      summary: Lista de usuários cadastrados
+      tags:
+      - Users
+    post:
+      parameters:
+      - description: User JSON
+        in: body
+        name: User
+        required: true
+        schema:
+          $ref: '#/definitions/models.User'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.User'
+        "400":
+          description: request não possui body
+          schema:
+            type: string
+      summary: Criar user
+      tags:
+      - Users
+  /{name}:
+    delete:
+      parameters:
+      - description: username do usuário a ser apagado
+        in: path
+        name: name
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      summary: Deletar user
+      tags:
+      - Users
+    get:
+      parameters:
+      - description: username do usuario a ser acessado
+        in: path
+        name: name
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      summary: Trazer um usuário pelo username
+      tags:
+      - Users
+    put:
+      parameters:
+      - description: username do usuário a ser atualizado
+        in: path
+        name: name
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      summary: Atualizar user
+      tags:
+      - Users
+  /createWithArray:
+    post:
+      parameters:
+      - description: User JSON
+        in: body
+        name: User
+        required: true
+        schema:
+          items:
+            $ref: '#/definitions/models.User'
+          type: array
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.User'
+            type: array
+      summary: Cria uma lista de usuários de acordo com o array
+      tags:
+      - Users
+swagger: "2.0"
